@@ -3,6 +3,7 @@ package com.atguigu.wc
 
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
+import org.apache.flink.streaming.api.windowing.time.Time
 
 //流处理WordCount
 object StreamWordCount {
@@ -11,16 +12,18 @@ object StreamWordCount {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
 
     //接受一个socket文本流
-    val dataStream = env.socketTextStream("localhost",7778)
+    val dataStream = env.socketTextStream("192.168.8.11",7779)
 
     //对每条数据处理
     val wordCountDataStream = dataStream.flatMap(_.split(" "))
       .filter(_.nonEmpty)
       .map((_, 1))
       .keyBy(0)
+      .timeWindow(Time.seconds(5))
       .sum(1)
+      .setParallelism(1)
 
-    wordCountDataStream.print().setParallelism(2)
+    wordCountDataStream.print()
 
     //启动executor
     env.execute("Stream Word Count")
