@@ -12,7 +12,7 @@ object StreamWordCount {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
 
     //接受一个socket文本流
-    val dataStream = env.socketTextStream("192.168.8.11",7779)
+    val dataStream = env.socketTextStream("192.168.8.11",7777)
 
     //对每条数据处理
     val wordCountDataStream = dataStream.flatMap(_.split(" "))
